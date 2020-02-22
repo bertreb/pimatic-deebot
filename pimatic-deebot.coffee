@@ -30,12 +30,12 @@ module.exports = (env) ->
       countries = deebot.countries
       @continent = countries[countrycode].continent.toLowerCase()
       @api = new EcoVacsAPI(device_id, countrycode, @continent)
-      
+
       @framework.deviceManager.registerDeviceClass('DeebotDevice', {
         configDef: @deviceConfigDef.DeebotDevice,
         createCallback: (config, lastState) => new DeebotDevice(config, lastState, @, @api, EcoVacsAPI, @continent)
       })
-      
+
       @framework.ruleManager.addActionProvider(new DeebotActionProvider(@framework))
 
       @framework.deviceManager.on('discover', (eventData) =>
@@ -49,7 +49,6 @@ module.exports = (env) ->
         "nick": null,
         "company": "eco-legacy"
         ###
-
 
         @api.connect(@email, @password_hash)
         .then(() =>
@@ -65,9 +64,9 @@ module.exports = (env) ->
                   name: (if vacuum.name? then vacuum.name else vacuum).toLowerCase()
                   class: "DeebotDevice"
                   nickname: (if vacuum.nick? then vacuum.nick else "")
-                @framework.deviceManager.discoveredDevice( "Deebot", config.name, config)          
+                @framework.deviceManager.discoveredDevice( "Deebot", config.name, config)
           )
-        ).catch((e) => 
+        ).catch((e) =>
           env.logger.error 'Failure in connecting: ' +  e.message
         )
       )
@@ -79,14 +78,14 @@ module.exports = (env) ->
       @config = config
       @id = @config.id
       @name = @config.name
-  
+
       @api = api
       @EcoVacsAPI_REALM = EcoVacsAPI.REALM
       @vacuum = @id
       @continent = continent
       VacBot = deebot.VacBot
 
-      @capabilities = 
+      @capabilities =
         hasMainBrush: false
         hasSpotAreas: false
         hasCustomAreas: false
@@ -142,15 +141,13 @@ module.exports = (env) ->
             return Promise.resolve @attributeValues[_attr]
           )
           @setAttr _attr, @attributeValues[_attr]
-      #if @attributes?.FanSpeed?
-      #  @attributes?.FanSpeed.type = "number"
       if @attributes?.BatteryInfo?
         #  @attributes.BatteryInfo.type = "number"
         @attributes?.BatteryInfo.unit = "%"
       if @attributes?.WaterLevel?
         #  @attributes.WaterLevel.type = "number"
         @attributes.WaterLevel.unit = "%"
-      
+
       for _attr in @config.attributes
         do (_attr) =>
           @attributes[_attr].hidden = @hide
@@ -168,13 +165,12 @@ module.exports = (env) ->
               @vacbot.on 'ready', (event) =>
                 env.logger.debug('connected')
                 @setAttr("status","Deebot offline")
-              
+
                 for listener in vacBotListeners
                   do(listener)=>
                     @vacbot.on(listener, (value) =>
                       unless value?
                         return
-                      env.logger.info "Value: #{listener} " + value
                       @attributeValues[listener] = value
                       @emit listener, value
                       @setAttr("status","Deebot online")
@@ -183,7 +179,6 @@ module.exports = (env) ->
                   env.logger.error "Error vacbot.on " + err
 
                 getStatus = () =>
-                  env.logger.info "Getting status update"
                   @vacbot.run("GetBatteryState")
                   @vacbot.run('GetChargeState')
                   @vacbot.run("GetCleanState")
@@ -203,7 +198,7 @@ module.exports = (env) ->
                 getStatus()
 
               @vacbot.on 'message', (m) =>
-                env.logger.info "Message " + m
+                env.logger.debug "Message " + m
               @vacbot.connect_and_wait_until_ready()
 
           ).catch((err)=>
@@ -219,7 +214,7 @@ module.exports = (env) ->
 
       initDeebot()
 
-      
+
       # MQTT
       #@vacbot.on('message', (event) =>
       #  env.logger.debug('[app2.js] message: ' + event)
@@ -246,14 +241,14 @@ module.exports = (env) ->
           @vacbot.run('GetChargeState')
           @vacbot.run('GetBatteryState')
         , 60000)
-          
-      vacbot.run("Clean", mode, action); 
+
+      vacbot.run("Clean", mode, action);
         mode: auto, edge, spot, spot_area, single_room, stop
         action: start, pause, resume, stop
       vacbot.run("SpotArea", mode, action, area);
         comma-separated list of numbers starting by 0 (e.g. 1,3) for areas to be cleaned.
       vacbot.run("CustomArea", mode, action, map_position, cleanings);
-        map_position comma-separated list of exactly 4 position values for x1,y1,x2,y2 
+        map_position comma-separated list of exactly 4 position values for x1,y1,x2,y2
           (e.g. -3975.000000,2280.000000,-1930.000000,4575.000000)
           position 0.000000,0.000000,0.000000,0.000000 the position of the charging station
         cleanings: 1,2
@@ -290,8 +285,6 @@ module.exports = (env) ->
             @vacbot.run("Stop") #, @capabilities.currentMode, "stop")
           when "charge"
             @vacbot.run("Charge")
-          when "playsound"
-            @vacbot.run("PlaySound")
           else
             env.logger.debug "Unknown command " + command + "-" + action
             reject()
@@ -369,12 +362,6 @@ module.exports = (env) ->
               setCommand('charge')
               match = m.getFullMatch()
             )
-          ),
-          ((m) =>
-            return m.match(' playsound', (m)=>
-              setCommand('playsound')
-              match = m.getFullMatch()
-            )
           )
         ])
 
@@ -397,7 +384,7 @@ module.exports = (env) ->
     executeAction: (simulate) =>
       if simulate
         return __("would have cleaned \"%s\"", "")
-      else       
+      else
         @beebotDevice.execute(@command)
         .then(()=>
           return __("\"%s\" Rule executed", @command)

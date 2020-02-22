@@ -31,6 +31,7 @@
   "dependencies": {
     "ecovacs-deebot": "^0.2.5",
     "node-machine-id": "^1.1.12"
+    "lodash": "^4.17.15"
   },
   "peerDependencies": {
     "pimatic": "0.9.*"
