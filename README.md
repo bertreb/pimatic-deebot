@@ -19,7 +19,8 @@ The automatic generated ID must not change. Its the unique reference to to vacuu
 ```
 {
   nickname:   "A nickname for the deebot set via the app and then used in Pimatic
-  show:       "If 'all': variables will be shown in the GUI except the variables selected in Attributes. If 'none': nothing will be shown in the GUI, except the ones selected in Attributes."
+  show:       "If 'all': variables will be shown in the GUI except the variables selected in Attributes.
+  If 'none': nothing will be shown in the GUI, except the ones selected in Attributes."
   attributes: "Deebot attributes that will be hidden (show=all) or shown (show=none) in the GUI."
   items:[
     "ChargeState", "FanSpeed", "CleanReport", "BatteryInfo",
