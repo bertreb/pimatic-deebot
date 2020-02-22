@@ -38,3 +38,8 @@ The Deebot can be controlled via rules
 
 The action syntax:
   deebot \<Pimatic Deebot Id> [clean|pause|resume|stop|charge]
+
+---
+The plugin is node v4-v10 compatible and in development.
+
+You could backup Pimatic before you are using this plugin!
