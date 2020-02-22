@@ -38,7 +38,7 @@ The Deebot can be controlled via rules
 
 ```
 The action syntax:
-  deebot \<Pimatic Deebot Id> [clean|pause|resume|stop|charge]
+  deebot <Pimatic Deebot Id> [clean|pause|resume|stop|charge]
 ```
 
 ---
