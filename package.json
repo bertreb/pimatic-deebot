@@ -1,6 +1,6 @@
 {
   "name": "pimatic-deebot",
-  "description": "Pimatic plugin for controlling an Ecovacs-deebot cleaner robot",
+  "description": "Pimatic plugin to control one or more Ecovacs Deebot cleaning robots",
   "author": {
     "name": "Bert Gierveld",
     "email": "gitbertreb@gmail.com",
