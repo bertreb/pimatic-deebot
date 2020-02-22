@@ -14,7 +14,7 @@ Pimatic plugin to control one or more Ecovacs Deebot cleaning robots
 ## Config of a Deebot Device
 
 Devices are added via the discovery function. Per cleaning robot a DeebotDevice is discovered unless the device is already in the config.
-The automatic generated Id must not change. Its the unique reference to your vacuum.
+The automatic generated Id must not change. Its the unique reference to your vacuum. You can change the name after you have saved the device. 
 
 ```
 {
