@@ -36,4 +36,5 @@ The automatic generated Id must not change. Its the unique reference to your vac
 The attributes are updated and visible in the Gui. The items you can use depend on your type of Deebot.
 The Deebot can be controlled via rules
 
-deebot \<Pimatic Deebot Id> [clean|pause|resume|stop|charge]
+The action syntax:
+  deebot \<Pimatic Deebot Id> [clean|pause|resume|stop|charge]
