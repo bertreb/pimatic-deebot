@@ -1,10 +1,9 @@
 module.exports = (env) ->
   Promise = env.require 'bluebird'
   assert = env.require 'cassert'
-  _ = require('lodash')
   M = env.matcher
+  _ = require('lodash')
   deebot = require('ecovacs-deebot')
-  #sucks = require('./..') # ./node_modules/pimatic-deebot/node-modules/ecovacs-deebot/index.js')
   nodeMachineId = require('node-machine-id')
 
   class DeebotPlugin extends env.plugins.Plugin
@@ -23,7 +22,7 @@ module.exports = (env) ->
 
       @email = @config.email # "email@domain.com";
       password = @config.password #"a1b2c3d4";
-      countrycode = @config.countrycode # 'DE';
+      countrycode = (@config.countrycode ).toUpperCase() # 'DE';
 
       @password_hash = EcoVacsAPI.md5(password)
       device_id = EcoVacsAPI.md5(nodeMachineId.machineIdSync())
@@ -55,13 +54,13 @@ module.exports = (env) ->
           @api.devices()
           .then((devices) =>
             for vacuum in devices
-              _did = (if vacuum.did? then vacuum.did else vacuum)
-              if _.find(@framework.deviceManager.devicesConfig,(d)=> d.id is _did)
+              _did = (if vacuum.did? then vacuum.did else vacuum).toLowerCase()
+              if _.find(@framework.deviceManager.devicesConfig,(d) => (d.id).indexOf(_did)>=0)
                 env.logger.info "Device '" + _did + "' already in config"
               else
                 config =
-                  id: (if vacuum.did? then vacuum.did else vacuum).toLowerCase()
-                  name: (if vacuum.name? then vacuum.name else vacuum).toLowerCase()
+                  id: _did
+                  name: (if vacuum.nick? then vacuum.nick else if vacuum.name? then vacuum.name else vacuum).toLowerCase()
                   class: "DeebotDevice"
                   nickname: (if vacuum.nick? then vacuum.nick else "")
                 @framework.deviceManager.discoveredDevice( "Deebot", config.name, config)
@@ -211,69 +210,12 @@ module.exports = (env) ->
           @setAttr("status","offline")
         )
 
-
       initDeebot()
-
-
-      # MQTT
-      #@vacbot.on('message', (event) =>
-      #  env.logger.debug('[app2.js] message: ' + event)
-      #)
-
-
-      ###
-      console.log('[app2.js] isKnownDevice: ' + @vacbot.isKnownDevice());
-      console.log('[app2.js] isSupportedDevice: ' + @vacbot.isSupportedDevice());
-      console.log('[app2.js] name: ' + @vacbot.getDeviceProperty('name'));
-      console.log('[app2.js] hasMainBrush: ' + @vacbot.hasMainBrush());
-      console.log('[app2.js] hasSpotAreas: ' + @vacbot.hasSpotAreas());
-      console.log('[app2.js] hasCustomAreas: ' + @vacbot.hasCustomAreas());
-      console.log('[app2.js] hasMoppingSystem: ' + @vacbot.hasMoppingSystem());
-      console.log('[app2.js] hasVoiceReports: ' + @vacbot.hasVoiceReports());
-
-      if (!@vacbot.useMqtt)
-        @vacbot.run('Clean');
-        @vacbot.run('GetLifeSpan', 'main_brush')
-        @vacbot.run('GetLifeSpan', 'side_brush')
-        @vacbot.run('GetLifeSpan', 'filter')
-        interval = setInterval(() =>
-          @vacbot.run('GetCleanState')
-          @vacbot.run('GetChargeState')
-          @vacbot.run('GetBatteryState')
-        , 60000)
-
-      vacbot.run("Clean", mode, action);
-        mode: auto, edge, spot, spot_area, single_room, stop
-        action: start, pause, resume, stop
-      vacbot.run("SpotArea", mode, action, area);
-        comma-separated list of numbers starting by 0 (e.g. 1,3) for areas to be cleaned.
-      vacbot.run("CustomArea", mode, action, map_position, cleanings);
-        map_position comma-separated list of exactly 4 position values for x1,y1,x2,y2
-          (e.g. -3975.000000,2280.000000,-1930.000000,4575.000000)
-          position 0.000000,0.000000,0.000000,0.000000 the position of the charging station
-        cleanings: 1,2
-      vacbot.run("Edge");
-      vacbot.run("Spot");
-      vacbot.run("Stop");
-      vacbot.run("Pause");
-      vacbot.run("Charge");
-      vacbot.run("GetCleanState");
-      vacbot.run("GetChargeState");
-      vacbot.run("GetBatteryState");
-      vacbot.run("PlaySound");
-      vacbot.run('GetLifeSpan', 'main_brush');
-      vacbot.run('GetLifeSpan', 'side_brush');
-      vacbot.run('GetLifeSpan', 'filter');
-      vacbot.run('GetWaterLevel');
-      vacbot.run('SetWaterLevel', level);
-      ###
 
       super()
 
     execute: (command) =>
       return new Promise((resolve,reject) =>
-
-        env.logger.debug "Commando ontvangen " + command
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
@@ -286,7 +228,7 @@ module.exports = (env) ->
           when "charge"
             @vacbot.run("Charge")
           else
-            env.logger.debug "Unknown command " + command + "-" + action
+            env.logger.debug "Unknown command " + command
             reject()
         resolve()
       )

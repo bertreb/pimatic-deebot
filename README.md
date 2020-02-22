@@ -4,22 +4,22 @@ Pimatic plugin to control one or more Ecovacs Deebot cleaning robots
 ## Config of the plugin
 ```
 {
-  email:        "The email address for your deebots account"
-  password:     "The password for your deebots account"
+  email:        "The email address for your Deebots account"
+  password:     "The password for your Deebots account"
   countrycode:  "Your country code like 'DE'"
-  debug:        "Debug mode. Writes debug messages to the pimatic log, if set to true."
+  debug:        "Debug mode. Writes debug messages to the Pimatic log, if set to true."
 }
 ```
 
 ## Config of a Deebot Device
 
-Devices are added via the discovery function.
-The automatic generated ID must not change. Its the unique reference to to vacuum
+Devices are added via the discovery function. Per cleaning robot a DeebotDevice is discovered unless the device is already in the config.
+The automatic generated Id must not change. Its the unique reference to your vacuum.
 
 ```
 {
   nickname:
-    "A nickname for the deebot set via the app and then used in Pimatic
+    "A nickname for the Deebot set via the app and then used in Pimatic
   show:       
     "If 'all': variables will be shown in the GUI except the variables selected in Attributes.
     If 'none': nothing will be shown in the GUI, except the ones selected in Attributes."
@@ -36,4 +36,4 @@ The automatic generated ID must not change. Its the unique reference to to vacuu
 The attributes are updated and visible in the Gui. The items you can use depend on your type of Deebot.
 The Deebot can be controlled via rules
 
-deebot <Pimatic DeebBot ID> [clean|pause|resume|stop|charge]
+deebot <Pimatic DeebBot Id> [clean|pause|resume|stop|charge]
