@@ -22,8 +22,9 @@ The automatic generated ID must not change. Its the unique reference to to vacuu
   show:       "If 'all': variables will be shown in the GUI except the variables selected in Attributes. If 'none': nothing will be shown in the GUI, except the ones selected in Attributes."
   attributes: "Deebot attributes that will be hidden (show=all) or shown (show=none) in the GUI."
   items:[
-    "ChargeState", "FanSpeed", "CleanReport", "BatteryInfo",      "LifeSpan_filter" , "LifeSpan_main_brush", "LifeSpan_side_brush",
-    "WaterLevel", "WaterBoxInfo"
+    "ChargeState", "FanSpeed", "CleanReport", "BatteryInfo",
+    "LifeSpan_filter" , "LifeSpan_main_brush",
+    "LifeSpan_side_brush", "WaterLevel", "WaterBoxInfo"
   ]
 }
 ```
