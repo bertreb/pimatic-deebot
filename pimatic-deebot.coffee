@@ -31,7 +31,7 @@ module.exports = (env) ->
 
       @framework.deviceManager.registerDeviceClass('DeebotDevice', {
         configDef: @deviceConfigDef.DeebotDevice,
-        createCallback: (config, lastState) => new DeebotDevice(config, lastState, @, @api, EcoVacsAPI, @continent)
+        createCallback: (config, lastState) => new DeebotDevice(config, lastState, @, @framework, @api, EcoVacsAPI, @continent)
       })
 
       @framework.ruleManager.addActionProvider(new DeebotActionProvider(@framework))
@@ -72,7 +72,7 @@ module.exports = (env) ->
 
   class DeebotDevice extends env.devices.Device
 
-    constructor: (config, lastState, @plugin, api, EcoVacsAPI, continent) ->
+    constructor: (config, lastState, @plugin, @framework, api, EcoVacsAPI, continent) ->
       @config = config
       @id = @config.id
       @name = @config.name
@@ -138,16 +138,19 @@ module.exports = (env) ->
             @attributes[_attr].type = "number"
             @attributes[_attr].unit = "%"
             @attributes[_attr].displayFormat = "fixed,decimal:0"
-          @attributeValues[_attr] = (if lastState?[_attr]?.value? then lastState[_attr].value else "")
+            _lastState = (if lastState?[_attr]?.value? then Number lastState[_attr].value else 0 )
+          else
+            _lastState = (if lastState?[_attr]?.value? then lastState[_attr].value else "" )
+          @attributeValues[_attr] = _lastState
           @_createGetter(_attr, =>
             return Promise.resolve @attributeValues[_attr]
           )
-          @setAttr _attr, @attributeValues[_attr]
 
-      for _attr in @config.attributes
-        do (_attr) =>
-          @attributes[_attr].hidden = @hide
-
+      @framework.on 'after init', =>
+        for _attr in @config.attributes
+          do (_attr) =>
+            @attributes[_attr].hidden = @hide
+            @setAttr _attr, @attributeValues[_attr]
 
       initDeebot = () =>
         @api.connect(@plugin.email, @plugin.password_hash)
@@ -169,11 +172,9 @@ module.exports = (env) ->
                       unless value?
                         return
                       if (@attributes[listener].type).indexOf("number") >= 0
-                        @attributeValues[listener] = Math.round(Number value)
-                        @emit listener, Math.round(Number value)
+                        @setAttr(listener, Math.round(Number value))
                       else
-                        @attributeValues[listener] = value                        
-                        @emit listener, value
+                        @setAttr(listener, value)
                       @setAttr("status","Deebot online")
                     )
                 @vacbot.on 'error', (err) =>
@@ -216,11 +217,13 @@ module.exports = (env) ->
 
       super()
 
-    execute: (command) =>
+    execute: (command, rooms) =>
       return new Promise((resolve,reject) =>
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
+          when "cleanroom"
+            @vacbot.run("SpotArea", @capabilities.currentMode, "start", rooms)
           when "pause"
             @vacbot.run("Pause") #, @capabilities.currentMode, "pause")
           when "resume"
@@ -242,9 +245,9 @@ module.exports = (env) ->
 
     setAttr: (attr, _status) =>
       unless @attributeValues[attr] is _status
+        env.logger.debug "attribute '" + attr + "' with type '" + @attributes[attr].type + "', is set to " + _status
         @attributeValues[attr] = _status
-        @emit attr, _status #@attributeValues[attr]
-        env.logger.debug "Set attribute '#{attr}' to '#{_status}'"
+        @emit attr, _status
 
 
     destroy:() =>
@@ -272,8 +275,11 @@ module.exports = (env) ->
         @command = command
 
       @rooms = []
-      addRoom = (m,room) =>
-        @rooms.push room
+      addRoom = (m,tokens) =>
+        unless tokens >=0
+          context?.addError("Roomnumber should 0 or higher.")
+          return
+        @rooms.push Number tokens
  
       m = M(input, context)
         .match('deebot ')
@@ -285,6 +291,12 @@ module.exports = (env) ->
           beebotDevice = d
         )
         .or([
+          ((m) =>
+            return m.match(' clean')
+              .match(' [')
+              .matchNumber(addRoom)
+              .match(']')
+          ),
           ((m) =>
             return m.match(' clean', (m) =>
               setCommand('clean')
@@ -323,7 +335,7 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command)
+          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms)
         }
       else
         return null
@@ -331,7 +343,7 @@ module.exports = (env) ->
 
   class DeebotActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @beebotDevice, @command) ->
+    constructor: (@framework, @beebotDevice, @command, @rooms) ->
 
     executeAction: (simulate) =>
       if simulate
@@ -339,7 +351,7 @@ module.exports = (env) ->
       else
         @beebotDevice.execute(@command)
         .then(()=>
-          return __("\"%s\" Rule executed", @command)
+          return __("\"%s\" Rule executed", @command, @rooms)
         ).catch((err)=>
           return __("\"%s\" Rule not executed", "")
         )

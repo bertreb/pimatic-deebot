@@ -10,3 +10,6 @@
 	* changed displayFormat to decimals:0
 * 20200223, v0.0.7
 	* fix attribute type mismatch on startup
+* 20200223, v0.0.8
+	* fix attribute type mismatch on startup
+	* added 1 room SpotArea
