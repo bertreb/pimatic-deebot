@@ -219,6 +219,7 @@ module.exports = (env) ->
 
     execute: (command, rooms) =>
       return new Promise((resolve,reject) =>
+        #env.logger.info "Command " + command + ", Rooms " + rooms
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
@@ -276,7 +277,7 @@ module.exports = (env) ->
 
       @roomsArray = []
       ###
-      matchRoomsListArgs = (vars, {argn}, callback) ->
+      matchRoomsListArgs = (vars, callback) ->
         unless @input? then return @
 
         assert vars? and typeof variables is "object"
@@ -290,7 +291,7 @@ module.exports = (env) ->
           last = next
           next
             .match([',', ' , ', ' ,', ', '])
-            .matchRoomsListArgs((m,{argn: argn+1}, ts) =>
+            .matchRoomsListArgs((m, ts) =>
               tokens.push ','
               tokens = tokens.concat ts
               last = m
@@ -299,6 +300,8 @@ module.exports = (env) ->
 
         callback(last, tokens)
         return last
+
+      isNumber = (n) -> "#{n}".match(/^-?[0-9]+\.?[0-9]*$/)?
       ###
 
       addRoom = (m,tokens) =>
@@ -306,6 +309,7 @@ module.exports = (env) ->
           context?.addError("Roomnumber should 0 or higher.")
           return
         @roomsArray.push Number tokens
+        setCommand("cleanroom")
  
       m = M(input, context)
         .match('deebot ')
@@ -318,16 +322,16 @@ module.exports = (env) ->
         )
         .or([
           ((m) =>
+            return m.match(' clean', (m) =>
+              setCommand('clean')
+              match = m.getFullMatch()
+            )      
+          ),
+          ((m) =>
             return m.match(' clean')
               .match(' [')
               .matchNumber(addRoom)
               .match(']')
-          ),
-          ((m) =>
-            return m.match(' clean', (m) =>
-              setCommand('clean')
-              match = m.getFullMatch()
-           )         
           ),
           ((m) =>
             return m.match(' pause', (m) =>
@@ -363,7 +367,7 @@ module.exports = (env) ->
         if i < @roomsArray.length - 1
           @rooms += ", "
       #@rooms += ")"
-      #env.logger.debug "Roomlist " + @rooms
+      #env.logger.debug "command " + @command + ", Roomlist " + @rooms
 
       match = m.getFullMatch()
       if match? #m.hadMatch()
@@ -385,9 +389,9 @@ module.exports = (env) ->
       if simulate
         return __("would have cleaned \"%s\"", "")
       else
-        @beebotDevice.execute(@command)
+        @beebotDevice.execute(@command,@rooms)
         .then(()=>
-          return __("\"%s\" Rule executed", @command, @rooms)
+          return __("\"%s\" Rule executed", @command)
         ).catch((err)=>
           return __("\"%s\" Rule not executed", "")
         )

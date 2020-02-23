@@ -19,3 +19,5 @@
 	* changed SpotArea delimiter for spot area
 * 20200223, v0.0.12
 	* changed SpotArea command options
+* 20200223, v0.0.13
+	* changed flow of SpotArea command
