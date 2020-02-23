@@ -139,11 +139,20 @@ module.exports = (env) ->
           )
           @setAttr _attr, @attributeValues[_attr]
       if @attributes?.BatteryInfo?
-        #  @attributes.BatteryInfo.type = "number"
+        @attributes.BatteryInfo.type = "number"
         @attributes?.BatteryInfo.unit = "%"
       if @attributes?.WaterLevel?
-        #  @attributes.WaterLevel.type = "number"
+        @attributes.WaterLevel.type = "number"
         @attributes.WaterLevel.unit = "%"
+      if @attributes?.LifeSpan_filter?
+        @attributes.LifeSpan_filter.type = "number"
+        @attributes.LifeSpan_filter.unit = "%"
+      if @attributes?.LifeSpan_main_brush?
+        @attributes.LifeSpan_main_brush.type = "number"
+        @attributes.LifeSpan_main_brush.unit = "%"
+      if @attributes?.LifeSpan_side_brush?
+        @attributes.LifeSpan_side_brush.type = "number"
+        @attributes.LifeSpan_side_brush.unit = "%"
 
       for _attr in @config.attributes
         do (_attr) =>
@@ -168,7 +177,10 @@ module.exports = (env) ->
                     @vacbot.on(listener, (value) =>
                       unless value?
                         return
-                      @attributeValues[listener] = value
+                      if @attributeValues[listener].type = "number"
+                        @attributeValues[listener] = Math.round(Number value)
+                      else
+                        @attributeValues[listener] = value                        
                       @emit listener, value
                       @setAttr("status","Deebot online")
                     )
