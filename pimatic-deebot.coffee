@@ -123,6 +123,7 @@ module.exports = (env) ->
         return Promise.resolve @attributeValues["status"]
       )
       @setAttr "status", @attributeValues["status"]
+      @numberAttributes = ["BatteryInfo","WaterLevel","LifeSpan_filter","LifeSpan_main_brush","LifeSpan_side_brush"]
 
       for _attr in vacBotListeners
         do (_attr) =>
@@ -133,29 +134,15 @@ module.exports = (env) ->
             acronym: _attr
             hidden: @show
             displaySparkline: false
+          if _.find(@numberAttributes, (n)=> n.indexOf(_attr)>=0)
+            @attributes[_attr].type = "number"
+            @attributes[_attr].unit = "%"
+            @attributes[_attr].displayFormat = "fixed,decimal:0"
           @attributeValues[_attr] = (if lastState?[_attr]?.value? then lastState[_attr].value else "")
           @_createGetter(_attr, =>
             return Promise.resolve @attributeValues[_attr]
           )
           @setAttr _attr, @attributeValues[_attr]
-      if @attributes?.BatteryInfo?
-        @attributes.BatteryInfo.type = "number"
-        @attributes?.BatteryInfo.unit = "%"
-      if @attributes?.WaterLevel?
-        @attributes.WaterLevel.type = "number"
-        @attributes.WaterLevel.unit = "%"
-      if @attributes?.LifeSpan_filter?
-        @attributes.LifeSpan_filter.type = "number"
-        @attributes.LifeSpan_filter.unit = "%"
-        @attributes.LifeSpan_filter.displayFormat = "fixed,decimal:0"
-      if @attributes?.LifeSpan_main_brush?
-        @attributes.LifeSpan_main_brush.type = "number"
-        @attributes.LifeSpan_main_brush.unit = "%"
-        @attributes.LifeSpan_main_brush.displayFormat = "fixed,decimal:0"
-      if @attributes?.LifeSpan_side_brush?
-        @attributes.LifeSpan_side_brush.type = "number"
-        @attributes.LifeSpan_side_brush.unit = "%"
-        @attributes.LifeSpan_side_brush.displayFormat = "fixed,decimal:0"
 
       for _attr in @config.attributes
         do (_attr) =>
@@ -180,11 +167,12 @@ module.exports = (env) ->
                     @vacbot.on(listener, (value) =>
                       unless value?
                         return
-                      if @attributeValues[listener].type = "number"
+                      if (@attributes[listener].type).indexOf("number") >= 0
                         @attributeValues[listener] = Math.round(Number value)
+                        @emit listener, Math.round(Number value)
                       else
                         @attributeValues[listener] = value                        
-                      @emit listener, value
+                        @emit listener, value
                       @setAttr("status","Deebot online")
                     )
                 @vacbot.on 'error', (err) =>
