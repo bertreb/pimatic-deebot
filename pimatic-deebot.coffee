@@ -223,7 +223,7 @@ module.exports = (env) ->
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
           when "cleanroom"
-            @vacbot.run("SpotArea", @capabilities.currentMode, "start", rooms)
+            @vacbot.run("SpotArea", "spot", "start", rooms)
           when "pause"
             @vacbot.run("Pause") #, @capabilities.currentMode, "pause")
           when "resume"
@@ -275,10 +275,31 @@ module.exports = (env) ->
         @command = command
 
       @roomsArray = []
-      getRooms = (m,tokens) =>
-        _tokens = tokens.trim()
-        @roomsArray = _tokens.split(',')
-        return m.next
+      ###
+      matchRoomsListArgs = (vars, {argn}, callback) ->
+        unless @input? then return @
+
+        assert vars? and typeof variables is "object"
+        assert typeof callback is "function"
+
+        tokens = []
+        last = this
+
+        @matchNumber((next, ts) =>
+          tokens = tokens.concat ts
+          last = next
+          next
+            .match([',', ' , ', ' ,', ', '])
+            .matchRoomsListArgs((m,{argn: argn+1}, ts) =>
+              tokens.push ','
+              tokens = tokens.concat ts
+              last = m
+            )
+        )
+
+        callback(last, tokens)
+        return last
+      ###
 
       addRoom = (m,tokens) =>
         unless tokens >=0
@@ -336,13 +357,13 @@ module.exports = (env) ->
 
       #@rooms = @roomsArray
       #convert rooms array into comma seperated string (list)
-      @rooms = "("
+      @rooms = ""
       for room,i in @roomsArray
         @rooms += room
         if i < @roomsArray.length - 1
-          @rooms += ","
-      @rooms += ")"
-      env.logger.debug "Roomlist " + @rooms
+          @rooms += ", "
+      #@rooms += ")"
+      #env.logger.debug "Roomlist " + @rooms
 
       match = m.getFullMatch()
       if match? #m.hadMatch()
