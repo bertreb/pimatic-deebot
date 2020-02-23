@@ -148,6 +148,7 @@ module.exports = (env) ->
         do (_attr) =>
           @attributes[_attr].hidden = @hide
 
+
       initDeebot = () =>
         @api.connect(@plugin.email, @plugin.password_hash)
         .then(() =>
@@ -242,7 +243,7 @@ module.exports = (env) ->
     setAttr: (attr, _status) =>
       unless @attributeValues[attr] is _status
         @attributeValues[attr] = _status
-        @emit attr, @attributeValues[attr]
+        @emit attr, _status #@attributeValues[attr]
         env.logger.debug "Set attribute '#{attr}' to '#{_status}'"
 
 

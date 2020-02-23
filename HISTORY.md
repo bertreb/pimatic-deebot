@@ -8,5 +8,5 @@
 	* changed type of numbers to number with rounding
 * 20200223, v0.0.5
 	* changed displayFormat to decimals:0
-* 20200223, v0.0.6
+* 20200223, v0.0.7
 	* fix attribute type mismatch on startup
