@@ -147,12 +147,15 @@ module.exports = (env) ->
       if @attributes?.LifeSpan_filter?
         @attributes.LifeSpan_filter.type = "number"
         @attributes.LifeSpan_filter.unit = "%"
+        @attributes.LifeSpan_filter.displayFormat = "fixed,decimal:0"
       if @attributes?.LifeSpan_main_brush?
         @attributes.LifeSpan_main_brush.type = "number"
         @attributes.LifeSpan_main_brush.unit = "%"
+        @attributes.LifeSpan_main_brush.displayFormat = "fixed,decimal:0"
       if @attributes?.LifeSpan_side_brush?
         @attributes.LifeSpan_side_brush.type = "number"
         @attributes.LifeSpan_side_brush.unit = "%"
+        @attributes.LifeSpan_side_brush.displayFormat = "fixed,decimal:0"
 
       for _attr in @config.attributes
         do (_attr) =>
