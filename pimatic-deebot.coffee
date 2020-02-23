@@ -214,8 +214,6 @@ module.exports = (env) ->
 
     execute: (command) =>
       return new Promise((resolve,reject) =>
-        env.logger.info "Execute not active"
-        return
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
