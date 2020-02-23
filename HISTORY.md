@@ -16,4 +16,4 @@
 * 20200223, v0.0.9
 	* changed SpotArea list
 * 20200223, v0.0.10
-	* changed SpotArea list with () as delimiter
+	* changed SpotArea delimiter for sport area
