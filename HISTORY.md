@@ -15,3 +15,5 @@
 	* added 1 room SpotArea
 * 20200223, v0.0.9
 	* changed SpotArea list
+* 20200223, v0.0.10
+	* changed SpotArea list with () as delimiter

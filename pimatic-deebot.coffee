@@ -275,6 +275,11 @@ module.exports = (env) ->
         @command = command
 
       @roomsArray = []
+      getRooms = (m,tokens) =>
+        _tokens = tokens.trim()
+        @roomsArray = _tokens.split(',')
+        return m.next
+
       addRoom = (m,tokens) =>
         unless tokens >=0
           context?.addError("Roomnumber should 0 or higher.")
@@ -331,12 +336,13 @@ module.exports = (env) ->
 
       #@rooms = @roomsArray
       #convert rooms array into comma seperated string (list)
-      @rooms = ""
+      @rooms = "("
       for room,i in @roomsArray
         @rooms += room
         if i < @roomsArray.length - 1
           @rooms += ","
-      #env.logger.debug "Roomlist " + @rooms
+      @rooms += ")"
+      env.logger.debug "Roomlist " + @rooms
 
       match = m.getFullMatch()
       if match? #m.hadMatch()
