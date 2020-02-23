@@ -18,7 +18,6 @@ module.exports = (env) ->
       @countrycode = @config.countrycode # 'DE';
 
       EcoVacsAPI = deebot.EcoVacsAPI
-      VacBot = deebot.VacBot
 
       @email = @config.email # "email@domain.com";
       password = @config.password #"a1b2c3d4";
@@ -82,7 +81,6 @@ module.exports = (env) ->
       @EcoVacsAPI_REALM = EcoVacsAPI.REALM
       @vacuum = @id
       @continent = continent
-      VacBot = deebot.VacBot
 
       @capabilities =
         hasMainBrush: false
@@ -160,7 +158,7 @@ module.exports = (env) ->
             #device = _.find(devices, (d)=> d.name is @vacuum)
             device = devices[0]
             if device?
-              @vacbot = new VacBot(@api.uid, @EcoVacsAPI_REALM, @api.resource, @api.user_access_token, device, @continent)
+              @vacbot = @api.getVacBot(@api.uid, @EcoVacsAPI_REALM, @api.resource, @api.user_access_token, device, @continent)
               @vacbot.on 'ready', (event) =>
                 env.logger.debug('connected')
                 @setAttr("status","Deebot offline")
@@ -216,6 +214,8 @@ module.exports = (env) ->
 
     execute: (command) =>
       return new Promise((resolve,reject) =>
+        env.logger.info "Execute not active"
+        return
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
@@ -227,6 +227,10 @@ module.exports = (env) ->
             @vacbot.run("Stop") #, @capabilities.currentMode, "stop")
           when "charge"
             @vacbot.run("Charge")
+          when "spot"
+            @vacbot.run("SpotArea", @capabilities.currentMode, area)
+          when "customclean"
+            @vacbot.run("CustomArea", @capabilities.currentMode, "Clean", map_position, @capabilities.cleanings)
           else
             env.logger.debug "Unknown command " + command
             reject()
@@ -265,6 +269,10 @@ module.exports = (env) ->
       setCommand = (command) =>
         @command = command
 
+      @rooms = []
+      addRoom = (m,room) =>
+        @rooms.push room
+ 
       m = M(input, context)
         .match('deebot ')
         .matchDevice(deebotDevices, (m, d) ->
@@ -279,7 +287,7 @@ module.exports = (env) ->
             return m.match(' clean', (m) =>
               setCommand('clean')
               match = m.getFullMatch()
-            )
+           )         
           ),
           ((m) =>
             return m.match(' pause', (m) =>

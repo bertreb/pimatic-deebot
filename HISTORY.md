@@ -2,5 +2,6 @@
 
 * 20200222, v0.0.1
 	* initial release
-* 20200222, v0.0.2
-	* 
+* 20200223, v0.0.2
+	* new ecovacs-deebot 0.3.0 as minimum version
+	
