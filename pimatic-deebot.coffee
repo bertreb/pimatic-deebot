@@ -274,12 +274,12 @@ module.exports = (env) ->
       setCommand = (command) =>
         @command = command
 
-      @rooms = []
+      @roomsArray = []
       addRoom = (m,tokens) =>
         unless tokens >=0
           context?.addError("Roomnumber should 0 or higher.")
           return
-        @rooms.push Number tokens
+        @roomsArray.push Number tokens
  
       m = M(input, context)
         .match('deebot ')
@@ -328,6 +328,15 @@ module.exports = (env) ->
             )
           )
         ])
+
+      #@rooms = @roomsArray
+      #convert rooms array into comma seperated string (list)
+      @rooms = ""
+      for room,i in @roomsArray
+        @rooms += room
+        if i < @roomsArray.length - 1
+          @rooms += ","
+      #env.logger.debug "Roomlist " + @rooms
 
       match = m.getFullMatch()
       if match? #m.hadMatch()

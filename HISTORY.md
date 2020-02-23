@@ -13,3 +13,5 @@
 * 20200223, v0.0.8
 	* fix attribute type mismatch on startup
 	* added 1 room SpotArea
+* 20200223, v0.0.9
+	* changed SpotArea list
