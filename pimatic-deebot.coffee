@@ -223,7 +223,7 @@ module.exports = (env) ->
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
           when "cleanroom"
-            @vacbot.run("SpotArea", "spot", "start", rooms)
+            @vacbot.run("SpotArea", "start", rooms)
           when "pause"
             @vacbot.run("Pause") #, @capabilities.currentMode, "pause")
           when "resume"
