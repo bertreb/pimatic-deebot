@@ -164,7 +164,7 @@ module.exports = (env) ->
               @vacbot = @api.getVacBot(@api.uid, @EcoVacsAPI_REALM, @api.resource, @api.user_access_token, device, @continent)
               @vacbot.on 'ready', (event) =>
                 env.logger.debug('connected')
-                @setAttr("status","Deebot offline")
+                @setAttr("status","Deebot connected")
 
                 for listener in vacBotListeners
                   do(listener)=>
@@ -208,8 +208,9 @@ module.exports = (env) ->
           )
         ).catch((err) =>
           env.logger.error "Error connecting " + err
-          @reconnectTimer = setTimeout(initDeebot, 600000)
-          env.logger.info "Beebot is offline, try reconnecting in 10 minutes"
+          @reconnectTimer = setTimeout(initDeebot, 120000)
+          clearTimeout(@statusTimer)
+          env.logger.info "Beebot is offline, try reconnecting in 2 minutes"
           @setAttr("status","offline")
         )
 
