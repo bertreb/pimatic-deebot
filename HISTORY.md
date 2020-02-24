@@ -21,3 +21,5 @@
 	* changed SpotArea command options
 * 20200223, v0.0.13
 	* changed flow of SpotArea command
+* 20200223, v0.0.14
+	* added variable as room string option

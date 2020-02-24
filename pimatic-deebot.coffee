@@ -276,33 +276,7 @@ module.exports = (env) ->
         @command = command
 
       @roomsArray = []
-      ###
-      matchRoomsListArgs = (vars, callback) ->
-        unless @input? then return @
-
-        assert vars? and typeof variables is "object"
-        assert typeof callback is "function"
-
-        tokens = []
-        last = this
-
-        @matchNumber((next, ts) =>
-          tokens = tokens.concat ts
-          last = next
-          next
-            .match([',', ' , ', ' ,', ', '])
-            .matchRoomsListArgs((m, ts) =>
-              tokens.push ','
-              tokens = tokens.concat ts
-              last = m
-            )
-        )
-
-        callback(last, tokens)
-        return last
-
-      isNumber = (n) -> "#{n}".match(/^-?[0-9]+\.?[0-9]*$/)?
-      ###
+      @roomsStringVar = null
 
       addRoom = (m,tokens) =>
         unless tokens >=0
@@ -310,6 +284,14 @@ module.exports = (env) ->
           return
         @roomsArray.push Number tokens
         setCommand("cleanroom")
+
+      roomString = (m,tokens) =>
+        unless tokens?
+          context?.addError("No variable")
+          return
+        @roomsStringVar = tokens
+        setCommand("cleanroom")
+        return
  
       m = M(input, context)
         .match('deebot ')
@@ -329,10 +311,18 @@ module.exports = (env) ->
           ),
           ((m) =>
             return m.match(' clean')
-              .match(' [')
-              .matchNumber(addRoom)
-              .match(']')
-          ),
+              .or([
+                ((m) =>
+                  return m.match(' [')
+                    .matchNumber(addRoom)
+                    .match(']')
+                ),
+                ((m) =>
+                  return m.match(' ')
+                    .matchVariable(roomString)
+                )
+              ])
+           ),
           ((m) =>
             return m.match(' pause', (m) =>
               setCommand('pause')
@@ -375,7 +365,7 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms)
+          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar)
         }
       else
         return null
@@ -383,13 +373,30 @@ module.exports = (env) ->
 
   class DeebotActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @beebotDevice, @command, @rooms) ->
+    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar) ->
 
     executeAction: (simulate) =>
       if simulate
         return __("would have cleaned \"%s\"", "")
       else
-        @beebotDevice.execute(@command,@rooms)
+        if @roomsStringVar?
+          _var = @roomsStringVar.slice(1) if @roomsStringVar.indexOf('$') >= 0
+          _rooms = @framework.variableManager.getVariableValue(_var)
+          unless _rooms?
+            return __("\"%s\" Rule not executed, #{_rooms} is not a valid room string", "")
+          _roomArr = (String _rooms).split(',')
+          newRooms = ""
+          for room,i in _roomArr
+            _room = (room.trimLeft()).trimEnd()
+            if Number.isNaN(Number _room) or Number _room < 0 or not (room?) or room is ""
+              return __("\"%s\" Rule not executed, #{_rooms} is not a valid room string", "")
+            if i > 0 then newRooms = newRooms + " "
+            newRooms = newRooms + _room
+            if i < (_roomArr.length - 1) then newRooms = newRooms + ","
+        else
+          newRooms = @rooms
+
+        @beebotDevice.execute(@command, newRooms)
         .then(()=>
           return __("\"%s\" Rule executed", @command)
         ).catch((err)=>

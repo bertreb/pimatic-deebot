@@ -38,8 +38,9 @@ The Deebot can be controlled via rules
 
 The action syntax:
 ```
-  deebot <Pimatic Deebot Id> [clean|pause|resume|stop|charge]
+  deebot <Pimatic Deebot Id> [clean|pause|resume|stop|charge] [<room-number>|$rooms-variable]
 ```
+The <room-nummer> or the $roomsvariable are optional. If you leave them out, the vacuum will start the default routine. The $rooms-variable is variable with room-numbers separated by a comma. Example:  0,1,8,3,2 
 
 ---
 The plugin is node v4-v10 compatible and in development.
