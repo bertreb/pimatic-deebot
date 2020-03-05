@@ -22,7 +22,7 @@ module.exports = {
           enum:[
             "ChargeState", "FanSpeed", "CleanReport", "BatteryInfo",
             "LifeSpan_filter" , "LifeSpan_main_brush", "LifeSpan_side_brush", 
-            "WaterLevel", "WaterBoxInfo" 
+            "WaterLevel" , "WaterBoxInfo"
           ]
     }
   }

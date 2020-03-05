@@ -25,5 +25,7 @@
 	* added variable as room string option
 * 20200223, v0.0.15
 	* set reconnect timer to 2 minutes
-* 20200223, v0.0.18
+* 20200305, v0.0.18
 	* added speed command
+* 20200305, v0.0.19
+	* update water info

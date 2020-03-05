@@ -123,7 +123,8 @@ module.exports = (env) ->
         return Promise.resolve @attributeValues["status"]
       )
       @setAttr "status", @attributeValues["status"]
-      @numberAttributes = ["BatteryInfo","WaterLevel","LifeSpan_filter","LifeSpan_main_brush","LifeSpan_side_brush"]
+      @numberAttributes = ["BatteryInfo","LifeSpan_filter","LifeSpan_main_brush","LifeSpan_side_brush"]
+      @booleanAttributes = ["WaterBoxInfo"]
 
       for _attr in vacBotListeners
         do (_attr) =>
@@ -139,7 +140,10 @@ module.exports = (env) ->
             @attributes[_attr].unit = "%"
             @attributes[_attr].displayFormat = "fixed,decimal:0"
             _lastState = (if lastState?[_attr]?.value? then Number lastState[_attr].value else 0 )
-          else
+          else if _.find(@booleanAttributes, (n)=> n.indexOf(_attr)>=0)
+            @attributes[_attr].type = "boolean"
+            _lastState = (if lastState?[_attr]?.value? then lastState[_attr].value else false )
+          else  
             _lastState = (if lastState?[_attr]?.value? then lastState[_attr].value else "" )
           @attributeValues[_attr] = _lastState
           @_createGetter(_attr, =>
@@ -189,7 +193,7 @@ module.exports = (env) ->
                     @vacbot.run('GetLifeSpan', 'side_brush')
                     @vacbot.run('GetLifeSpan', 'filter')
                   if @capabilities.hasMoppingSystem
-                    @vacbot.run("GetWaterLevel")
+                    @vacbot.run("GetWaterInfo")
                   @capabilities.hasMainBrush = @vacbot.hasMainBrush()
                   @capabilities.hasSpotAreas = @vacbot.hasSpotAreas()
                   @capabilities.hasCustomAreas = @vacbot.hasCustomAreas()

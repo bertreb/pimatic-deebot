@@ -22,7 +22,7 @@
     "cleaner",
     "ecovacs"
   ],
-  "version": "0.0.18",
+  "version": "0.0.19",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bertreb/pimatic-deebot.git"
