@@ -82,6 +82,8 @@ module.exports = (env) ->
       @vacuum = @id
       @continent = continent
 
+      @waterLevels = ["min","normal","high","max"]
+
       @capabilities =
         hasMainBrush: false
         hasSpotAreas: false
@@ -175,7 +177,11 @@ module.exports = (env) ->
                     @vacbot.on(listener, (value) =>
                       unless value?
                         return
-                      if (@attributes[listener].type).indexOf("number") >= 0
+                      if listener.indexOf("WaterLevel")>= 0
+                        if level<0 then level = 0
+                        if level>3 then level = 3
+                        @setAttr(listener, @waterLevels[level] )
+                      else if (@attributes[listener].type).indexOf("number") >= 0
                         @setAttr(listener, Math.round(Number value))
                       else
                         @setAttr(listener, value)
