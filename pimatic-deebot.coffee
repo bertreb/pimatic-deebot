@@ -371,9 +371,8 @@ module.exports = (env) ->
             return m.match(' speed')
               .or([
                 ((m) =>
-                  return m.match(' [')
+                  return m.match(' ')
                     .matchNumber(addSpeed)
-                    .match(']')
                 ),
                 ((m) =>
                   return m.match(' ')
