@@ -228,7 +228,7 @@ module.exports = (env) ->
 
       super()
 
-    execute: (command, rooms, speed) =>
+    execute: (command, rooms, speed, water) =>
       return new Promise((resolve,reject) =>
         #env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed
         #return
@@ -251,6 +251,8 @@ module.exports = (env) ->
             @vacbot.run("CustomArea", @capabilities.currentMode, "Clean", map_position, @capabilities.cleanings)
           when "speed"
             @vacbot.run("SetCleanSpeed", speed)
+          when "waterlevel"
+            @vacbot.run("SetWaterLevel", water)
           else
             env.logger.debug "Unknown command " + command
             reject()
@@ -283,6 +285,11 @@ module.exports = (env) ->
 
       beebotDevice = null
       @speed = 2
+      @waterlevel = 1
+      @roomsArray = []
+      @roomsStringVar = null
+      @waterStringVar = null
+
       deebotDevices = _(@framework.deviceManager.devices).values().filter(
         (device) => device.config.class == "DeebotDevice"
       ).value()
@@ -297,8 +304,6 @@ module.exports = (env) ->
         setCommand("speed")
         @speed = Number tokens
 
-      @roomsArray = []
-      @roomsStringVar = null
 
       addRoom = (m,tokens) =>
         unless tokens >=0
@@ -306,6 +311,13 @@ module.exports = (env) ->
           return
         @roomsArray.push Number tokens
         setCommand("cleanroom")
+
+      addWaterlevel = (m,tokens) =>
+        unless tokens>0 and tokens<5
+          context?.addError("Waterlevel must be 1, 2, 3 or 4.")
+          return
+        setCommand("waterlevel")
+        @waterlevel = Number tokens
 
       roomString = (m,tokens) =>
         unless tokens?
@@ -321,6 +333,14 @@ module.exports = (env) ->
           return
         @speedStringVar = tokens
         setCommand("speed")
+        return
+
+      waterlevelString = (m,tokens) =>
+        unless tokens?
+          context?.addError("No variable")
+          return
+        @waterStringVar = tokens
+        setCommand("waterlevel")
         return
 
       m = M(input, context)
@@ -378,15 +398,24 @@ module.exports = (env) ->
             )
           ),
           ((m) =>
-            return m.match(' speed')
+            return m.match(' speed ')
               .or([
                 ((m) =>
-                  return m.match(' ')
-                    .matchNumber(addSpeed)
+                  return m.matchNumber(addSpeed)
                 ),
                 ((m) =>
-                  return m.match(' ')
-                    .matchVariable(speedString)
+                  return m.matchVariable(speedString)
+                )
+              ])
+          ),
+          ((m) =>
+            return m.match(' waterlevel ')
+              .or([
+                ((m) =>
+                  return m.matchNumber(addWaterlevel)
+                ),
+                ((m) =>
+                  return m.matchVariable(waterlevelString)
                 )
               ])
           )
@@ -408,7 +437,7 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar, @speed,  @speedStringVar)
+          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar, @speed,  @speedStringVar, @waterlevel, @waterStringVar)
         }
       else
         return null
@@ -416,7 +445,7 @@ module.exports = (env) ->
 
   class DeebotActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar, @speed, @speedStringVar) ->
+    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar, @speed, @speedStringVar, @waterlevel, @waterStringVar) ->
 
     executeAction: (simulate) =>
       if simulate
@@ -443,14 +472,25 @@ module.exports = (env) ->
           _var = @speedStringVar.slice(1) if @speedStringVar.indexOf('$') >= 0
           _speed = @framework.variableManager.getVariableValue(_var)
           unless _speed?
-            return __("\"%s\" Rule not executed, #{_speed} is not a valid speed", "")
+            return __("\"%s\" Rule not executed, #{_speed} is not a valid variable", "")
           if Number.isNaN(Number _speed) or Number _speed < 1 or Number _speed > 4
             return __("\"%s\" Rule not executed, #{_speed} is not a valid speed value", "")
           newSpeed = _speed
         else
           newSpeed = @speed
 
-        @beebotDevice.execute(@command, newRooms, newSpeed)
+        if @waterStringVar?
+          _var = @waterStringVar.slice(1) if @speedStringVar.indexOf('$') >= 0
+          _waterlevel = @framework.variableManager.getVariableValue(_var)
+          unless _waterlevel?
+            return __("\"%s\" Rule not executed, #{_waterlevel} is not a valid variable", "")
+          if Number.isNaN(Number _waterlevel) or Number _waterlevel < 1 or Number _waterlevel > 4
+            return __("\"%s\" Rule not executed, #{_waterlevel} is not a valid waterlevel value", "")
+          newWaterlevel = _waterlevel
+        else
+          newWaterlevel = @waterlevel
+
+        @beebotDevice.execute(@command, newRooms, newSpeed, newWaterlevel)
         .then(()=>
           return __("\"%s\" Rule executed", @command)
         ).catch((err)=>

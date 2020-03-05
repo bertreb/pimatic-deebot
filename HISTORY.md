@@ -29,3 +29,5 @@
 	* added speed command
 * 20200305, v0.0.20
 	* update water info
+* 20200305, v0.0.21
+	* added waterlevel command
