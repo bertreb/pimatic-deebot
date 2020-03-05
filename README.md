@@ -38,10 +38,13 @@ The Deebot can be controlled via rules
 
 The action syntax:
 ```
-  deebot <Pimatic Deebot Id> [clean|pause|resume|stop|charge] [<room-number>|$rooms-variable]
+  deebot <Pimatic Deebot Id>
+    [clean] [<room-number>|$rooms-variable]
+    [pause|resume|stop|charge|
+    [speed] [<speed-number>|$speed-variable]
 ```
-The <room-nummer> or the $roomsvariable are optional. If you leave them out, the vacuum will start the default routine. The $rooms-variable is variable with room-numbers separated by a comma. Example:  0,1,8,3,2 
-
+The <room-nummer> or the $roomsvariable are optional. If you leave them out, the vacuum will start the default routine. The $rooms-variable is variable with room-numbers separated by a comma. Example:  0,1,8,3,2
+The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 ---
 The plugin is node v4-v10 compatible and in development.
 

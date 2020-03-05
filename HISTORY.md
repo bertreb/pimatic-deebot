@@ -25,3 +25,5 @@
 	* added variable as room string option
 * 20200223, v0.0.15
 	* set reconnect timer to 2 minutes
+* 20200223, v0.0.16
+	* added speed command

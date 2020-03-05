@@ -218,9 +218,10 @@ module.exports = (env) ->
 
       super()
 
-    execute: (command, rooms) =>
+    execute: (command, rooms, speed) =>
       return new Promise((resolve,reject) =>
-        #env.logger.info "Command " + command + ", Rooms " + rooms
+        env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed
+        return
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
@@ -238,6 +239,8 @@ module.exports = (env) ->
             @vacbot.run("SpotArea", @capabilities.currentMode, area)
           when "customclean"
             @vacbot.run("CustomArea", @capabilities.currentMode, "Clean", map_position, @capabilities.cleanings)
+          when "speed"
+            @vacbot.run("SetCleanSpeed", speed)
           else
             env.logger.debug "Unknown command " + command
             reject()
@@ -269,12 +272,20 @@ module.exports = (env) ->
     parseAction: (input, context) =>
 
       beebotDevice = null
+      @speed = 2
       deebotDevices = _(@framework.deviceManager.devices).values().filter(
         (device) => device.config.class == "DeebotDevice"
       ).value()
 
       setCommand = (command) =>
         @command = command
+
+      addSpeed = (m,tokens) =>
+        unless tokens>0 and tokens<5
+          context?.addError("Speed must be 1, 2, 3 or 4.")
+          return
+        setCommand("speed")
+        @speed = Number tokens
 
       @roomsArray = []
       @roomsStringVar = null
@@ -292,6 +303,14 @@ module.exports = (env) ->
           return
         @roomsStringVar = tokens
         setCommand("cleanroom")
+        return
+
+      speedString = (m,tokens) =>
+        unless tokens?
+          context?.addError("No variable")
+          return
+        @speedStringVar = tokens
+        setCommand("speed")
         return
  
       m = M(input, context)
@@ -347,6 +366,20 @@ module.exports = (env) ->
               setCommand('charge')
               match = m.getFullMatch()
             )
+          ),
+          ((m) =>
+            return m.match(' speed')
+              .or([
+                ((m) =>
+                  return m.match(' [')
+                    .matchNumber(addSpeed)
+                    .match(']')
+                ),
+                ((m) =>
+                  return m.match(' ')
+                    .matchVariable(speedString)
+                )
+              ])
           )
         ])
 
@@ -366,7 +399,7 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar)
+          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar, @speed,  @speedStringVar)
         }
       else
         return null
@@ -374,7 +407,7 @@ module.exports = (env) ->
 
   class DeebotActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar) ->
+    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar, @speed, @speedStringVar) ->
 
     executeAction: (simulate) =>
       if simulate
@@ -397,7 +430,18 @@ module.exports = (env) ->
         else
           newRooms = @rooms
 
-        @beebotDevice.execute(@command, newRooms)
+        if @speedStringVar?
+          _var = @speedStringVar.slice(1) if @speedStringVar.indexOf('$') >= 0
+          _speed = @framework.variableManager.getVariableValue(_var)
+          unless _speed?
+            return __("\"%s\" Rule not executed, #{_speed} is not a valid speed", "")
+          if Number.isNaN(Number _speed) or Number _speed < 1 or Number _speed > 4
+            return __("\"%s\" Rule not executed, #{_speed} is not a valid speed value", "")
+          newSpeed = _speed
+        else
+          newSpeed = @speed
+
+        @beebotDevice.execute(@command, newRooms, newSpeed)
         .then(()=>
           return __("\"%s\" Rule executed", @command)
         ).catch((err)=>
