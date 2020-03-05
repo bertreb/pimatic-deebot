@@ -220,8 +220,8 @@ module.exports = (env) ->
 
     execute: (command, rooms, speed) =>
       return new Promise((resolve,reject) =>
-        env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed
-        return
+        #env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed
+        #return
         switch command
           when "clean"
             @vacbot.run("Clean") #, @capabilities.currentMode, "start")
@@ -312,7 +312,7 @@ module.exports = (env) ->
         @speedStringVar = tokens
         setCommand("speed")
         return
- 
+
       m = M(input, context)
         .match('deebot ')
         .matchDevice(deebotDevices, (m, d) ->
@@ -327,7 +327,7 @@ module.exports = (env) ->
             return m.match(' clean', (m) =>
               setCommand('clean')
               match = m.getFullMatch()
-            )      
+            )
           ),
           ((m) =>
             return m.match(' clean')
