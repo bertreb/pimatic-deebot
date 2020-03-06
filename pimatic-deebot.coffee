@@ -228,9 +228,9 @@ module.exports = (env) ->
 
       super()
 
-    execute: (command, rooms, speed, water) =>
+    execute: (command, rooms, speed, water, area, cleanings) =>
       return new Promise((resolve,reject) =>
-        #env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed
+        env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed + ", area " + JSON.stringify(area) + ", cleanings " + cleanings
         #return
         switch command
           when "clean"
@@ -247,8 +247,8 @@ module.exports = (env) ->
             @vacbot.run("Charge")
           when "spot"
             @vacbot.run("SpotArea", @capabilities.currentMode, area)
-          when "customclean"
-            @vacbot.run("CustomArea", @capabilities.currentMode, "Clean", map_position, @capabilities.cleanings)
+          when "cleanarea"
+            @vacbot.run("CustomArea", @capabilities.currentMode, "Clean", area, cleanings)
           when "speed"
             @vacbot.run("SetCleanSpeed", speed)
           when "waterlevel"
@@ -289,6 +289,14 @@ module.exports = (env) ->
       @roomsArray = []
       @roomsStringVar = null
       @waterStringVar = null
+      @area = 
+        x1: 0
+        y1: 0
+        x2: 0
+        y2: 0
+      @areaStringVar = null
+      @cleanings = 1
+      @cleaningsStringVar = null
 
       deebotDevices = _(@framework.deviceManager.devices).values().filter(
         (device) => device.config.class == "DeebotDevice"
@@ -343,6 +351,44 @@ module.exports = (env) ->
         setCommand("waterlevel")
         return
 
+      addAreaX1 = (m,tokens) =>
+        @area.x1 = tokens
+        setCommand("cleanarea")
+      addAreaY1 = (m,tokens) =>
+        @area.y1 = tokens
+        setCommand("cleanarea")
+      addAreaX2 = (m,tokens) =>
+        @area.x2 = tokens
+        setCommand("cleanarea")
+      addAreaY2 = (m,tokens) =>
+        @area.y2 = tokens
+        setCommand("cleanarea")
+
+      areaString = (m,tokens) =>
+        unless tokens?
+          context?.addError("No variable")
+          return
+        @areaStringVar = tokens
+        setCommand("cleanroom")
+        return
+
+      addCleanings = (m,tokens) =>
+        env.logger.info "Cleanings " + tokens
+        unless (Number tokens) == 1 or (Number tokens) == 2
+          context?.addError("Cleanings should be 1 or 2.")
+          return
+        @cleanings = tokens
+        setCommand("cleanarea")
+
+      cleaningsString = (m,tokens) =>
+        unless tokens?
+          context?.addError("No variable")
+          return
+        @cleaningsStringVar = tokens
+        setCommand("cleanarea")
+        return
+
+
       m = M(input, context)
         .match('deebot ')
         .matchDevice(deebotDevices, (m, d) ->
@@ -372,7 +418,35 @@ module.exports = (env) ->
                     .matchVariable(roomString)
                 )
               ])
-           ),
+          ),
+          ((m) =>
+            return m.match(' cleanarea ')
+              .or([
+                ((m) =>
+                  return m.match('[')
+                    .matchNumber(addAreaX1)
+                    .match(",")
+                    .matchNumber(addAreaY1)
+                    .match(",")
+                    .matchNumber(addAreaX2)
+                    .match(",")
+                    .matchNumber(addAreaY2)
+                    .match(']')
+                ),
+                ((m) =>
+                  return m.matchVariable(areaString)
+                )
+              ])
+              .match(' cleanings ')
+                .or([
+                  ((m) =>
+                    return m.matchNumber(addCleanings)
+                  ),
+                  ((m) =>
+                    return m.matchVariable(cleaningsString)
+                  )
+                ])
+          ),
           ((m) =>
             return m.match(' pause', (m) =>
               setCommand('pause')
@@ -437,7 +511,8 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar, @speed,  @speedStringVar, @waterlevel, @waterStringVar)
+          actionHandler: new DeebotActionHandler(@framework, beebotDevice, @command, @rooms, @roomsStringVar, @speed,  
+            @speedStringVar, @waterlevel, @waterStringVar, @area, @areaStringVar, @cleanings, @cleaningsStringVar)
         }
       else
         return null
@@ -445,7 +520,8 @@ module.exports = (env) ->
 
   class DeebotActionHandler extends env.actions.ActionHandler
 
-    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar, @speed, @speedStringVar, @waterlevel, @waterStringVar) ->
+    constructor: (@framework, @beebotDevice, @command, @rooms, @roomsStringVar, @speed, 
+      @speedStringVar, @waterlevel, @waterStringVar, @area, @areaStringVar, @cleanings, @cleaningsStringVar) ->
 
     executeAction: (simulate) =>
       if simulate
@@ -480,7 +556,7 @@ module.exports = (env) ->
           newSpeed = @speed
 
         if @waterStringVar?
-          _var = @waterStringVar.slice(1) if @speedStringVar.indexOf('$') >= 0
+          _var = @waterStringVar.slice(1) if @waterStringVar.indexOf('$') >= 0
           _waterlevel = @framework.variableManager.getVariableValue(_var)
           unless _waterlevel?
             return __("\"%s\" Rule not executed, #{_waterlevel} is not a valid variable", "")
@@ -490,7 +566,35 @@ module.exports = (env) ->
         else
           newWaterlevel = @waterlevel
 
-        @beebotDevice.execute(@command, newRooms, newSpeed, newWaterlevel)
+        if @areaStringVar?
+          _var = @areaStringVar.slice(1) if @areaStringVar.indexOf('$') >= 0
+          _area = @framework.variableManager.getVariableValue(_var)
+          unless _area?
+            return __("\"%s\" Rule not executed, #{_area} is not a valid area string", "")
+          _coordsArr = (String _area).split(',')
+          newArea = ""
+          for coord,i in _coordsArr
+            _coord = (coord.trimLeft()).trimEnd()
+            if Number.isNaN(Number _coord)
+              return __("\"%s\" Rule not executed, #{_coord} is not a valid coordinate number", "")
+            if i > 0 then newArea = newArea + " "
+            newArea = newArea + _coord
+            if i < (_coordsArr.length - 1) then newArea = newArea + ","
+        else
+          newArea = @area.x1 + ", " + @area.y1 + ", " + @area.x2 + ", " + @area.y2
+
+        if @cleaningsStringVar?
+          _var = @cleaningsStringVar.slice(1) if @cleaningsStringVar.indexOf('$') >= 0
+          _cleanings = @framework.variableManager.getVariableValue(_var)
+          unless _cleanings?
+            return __("\"%s\" Rule not executed, #{_cleanings} does not excist", "")
+          if Number.isNaN(Number _cleanings) or Number _cleanings < 1 or Number _cleanings > 2
+            return __("\"%s\" Rule not executed, #{_cleanings} is not a valid cleanings value", "")
+          newCleanings = _cleanings
+        else
+          newCleanings = @cleanings
+
+        @beebotDevice.execute(@command, newRooms, newSpeed, newWaterlevel, newArea, newCleanings)
         .then(()=>
           return __("\"%s\" Rule executed", @command)
         ).catch((err)=>

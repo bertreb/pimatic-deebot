@@ -40,6 +40,7 @@ The action syntax:
 ```
   deebot <Pimatic Deebot Id>
     [clean] [<room-number>|$rooms-variable]
+    [cleanarea] [x1,y1,x2,y2]|$area-variable cleanings 1..2|$cleanings-variable
     [pause|resume|stop|charge|
     [speed] <speed-number>|$speed-variable
 ```
