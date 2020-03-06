@@ -230,7 +230,7 @@ module.exports = (env) ->
 
     execute: (command, rooms, speed, water, area, cleanings) =>
       return new Promise((resolve,reject) =>
-        env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed + ", area " + JSON.stringify(area) + ", cleanings " + cleanings
+        #env.logger.info "Command " + command + ", Rooms " + rooms + ", Speed " + speed + ", area " + JSON.stringify(area) + ", cleanings " + cleanings
         #return
         switch command
           when "clean"
@@ -248,7 +248,7 @@ module.exports = (env) ->
           when "spot"
             @vacbot.run("SpotArea", @capabilities.currentMode, area)
           when "cleanarea"
-            @vacbot.run("CustomArea", @capabilities.currentMode, "Clean", area, cleanings)
+            @vacbot.run("CustomArea", "start", area, cleanings)
           when "speed"
             @vacbot.run("SetCleanSpeed", speed)
           when "waterlevel"

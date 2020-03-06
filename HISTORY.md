@@ -31,5 +31,5 @@
 	* update water info
 * 20200305, v0.0.21
 	* added waterlevel command
-* 20200306, v0.0.22
-	* added waterlevel command
+* 20200306, v0.0.23
+	* added custom area command
