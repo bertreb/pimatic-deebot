@@ -48,6 +48,23 @@ The action syntax:
 The \<room-nummer> or the \$roomsvariable are optional. If you leave them out, the vacuum will start the default routine. The \$rooms-variable is variable with room-numbers separated by a comma. Example:  0,1,8,3,2
 The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 
+## Models
+**Supported models**
+Deebot Slim 2
+Deebot Ozmo 930
+Deebot Ozmo 950
+
+**Theses models are known to work**
+Deebot 601
+Deebot 710/711
+Deebot 900/901
+Deebot Ozmo 610
+Deebot Ozmo 900
+**These models should work**
+Deebot N79T
+Deebot M88
+Deebot 600/605
+
 ---
 The plugin is node v4-v10 compatible and in development.
 
