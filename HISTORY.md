@@ -33,5 +33,5 @@
 	* added waterlevel command
 * 20200306, v0.0.23
 	* added custom area command
-* 20200306, v0.0.24
+* 20200406, v0.0.24
 	* update to ecovacs-deebot lib version 0.4.3

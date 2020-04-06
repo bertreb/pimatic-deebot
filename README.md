@@ -51,14 +51,14 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 ## Support of models
 **Supported models**
 - Deebot Slim 2
-- Deebot Ozmo 930
-- Deebot Ozmo 950
-
-**Theses models are known to work**
 - Deebot 601
 - Deebot 710/711
 - Deebot 900/901
 - Deebot Ozmo 610
+- Deebot Ozmo 930
+- Deebot Ozmo 950
+
+**Theses models are known to work**
 - Deebot Ozmo 900
 
 **These models should work**
@@ -67,6 +67,6 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 - Deebot 600/605
 
 ---
-The plugin is node v4-v10 compatible and in development.
+The minimum node requirement for this plugin is node v8!
 
 You could backup Pimatic before you are using this plugin!
