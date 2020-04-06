@@ -1,6 +1,13 @@
 # pimatic-deebot
 Pimatic plugin to control one or more Ecovacs Deebot cleaning robots
 
+Before install this plugin on linux based systems the following commandline commands should be executed (a reboot might be necessary after the first line):
+```
+sudo apt-get update
+sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+```
+These libs are needed for the canvas library that is used for create map functionality and to identify the spot area during cleaning.
+
 ## Config of the plugin
 ```
 {
