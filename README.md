@@ -50,24 +50,21 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 
 ## Models
 **Supported models**
-
-Deebot Slim 2
-Deebot Ozmo 930
-Deebot Ozmo 950
+- Deebot Slim 2
+- Deebot Ozmo 930
+- Deebot Ozmo 950
 
 **Theses models are known to work**
-
-Deebot 601
-Deebot 710/711
-Deebot 900/901
-Deebot Ozmo 610
-Deebot Ozmo 900
+- Deebot 601
+- Deebot 710/711
+- Deebot 900/901
+- Deebot Ozmo 610
+- Deebot Ozmo 900
 
 **These models should work**
-
-Deebot N79T
-Deebot M88
-Deebot 600/605
+- Deebot N79T
+- Deebot M88
+- Deebot 600/605
 
 ---
 The plugin is node v4-v10 compatible and in development.
