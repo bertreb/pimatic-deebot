@@ -15,7 +15,7 @@ The plugin can be installed via the plugins page of Pimatic.
 {
   email:        "The email address for your Deebots account"
   password:     "The password for your Deebots account"
-  countrycode:  "Your country code like 'DE'"
+  countrycode:  "Your country code like 'DE'
   debug:        "Debug mode. Writes debug messages to the Pimatic log, if set to true."
 }
 ```
