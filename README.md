@@ -65,6 +65,7 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 - Deebot 710/711
 - Deebot 900/901
 - Deebot Ozmo 610
+- Deebot Ozmo 920
 - Deebot Ozmo 930
 - Deebot Ozmo 950
 
@@ -77,6 +78,6 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 - Deebot 600/605
 
 ---
-This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js). 
+This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js).
 
 The minimum node requirement for this plugin is node v8!
