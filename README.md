@@ -77,7 +77,8 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 - Deebot 600/605
 
 ---
-This plugin is bases on the ecovacs-deebot library from [mrbunglw64](https://github.com/mrbungle64/ecovacs-deebot.js)
+This plugin is bases on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js)
+
 The minimum node requirement for this plugin is node v8!
 
 You could backup Pimatic before you are using this plugin!
