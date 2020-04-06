@@ -8,6 +8,8 @@ sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev l
 ```
 These libs are needed for the canvas library that is used for create map functionality and to identify the spot area during cleaning.
 
+The plugin can be installed via the plugins page of Pimatic.
+
 ## Config of the plugin
 ```
 {
