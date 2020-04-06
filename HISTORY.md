@@ -33,8 +33,8 @@
 	* added waterlevel command
 * 20200306, v0.0.23
 	* added custom area command
-* 20200406, v0.0.24
-	* update to ecovacs-deebot lib version 0.4.3
 * 20200406, v0.0.25
+	* update to ecovacs-deebot lib version 0.4.3
+* 20200406, v0.0.26
 	* update to ecovacs-deebot lib version 0.4.4
 	* added support for Ozmo 920
