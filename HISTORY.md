@@ -38,3 +38,5 @@
 * 20200406, v0.0.26
 	* update to ecovacs-deebot lib version 0.4.4
 	* added support for Ozmo 920
+* 20200407, v0.0.27
+	* fix hide/show attributes

@@ -106,7 +106,8 @@ module.exports = (env) ->
 
       vacBotListeners = @plugin.deviceConfigDef.DeebotDevice.properties.attributes.items.enum
 
-      @show = @hide = false
+      @show = false
+      @hide = false
       if not @config.show? or @config.show is "all"
         @show = false
         @hide = true
@@ -152,11 +153,11 @@ module.exports = (env) ->
             return Promise.resolve @attributeValues[_attr]
           )
 
-      @framework.on 'after init', =>
-        for _attr in @config.attributes
-          do (_attr) =>
-            @attributes[_attr].hidden = @hide
-            @setAttr _attr, @attributeValues[_attr]
+      #@framework.on 'after init', =>
+      for _attr in @config.attributes
+        do (_attr) =>
+          @attributes[_attr].hidden = @hide
+          @setAttr _attr, @attributeValues[_attr]
 
       initDeebot = () =>
         @api.connect(@plugin.email, @plugin.password_hash)
