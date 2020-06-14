@@ -42,3 +42,5 @@
 	* fix hide/show attributes
 * 20200505, v0.0.28
 	* update to ecovacs-deebot lib version 0.4.8
+* 20200614, v0.0.29
+	* update to ecovacs-deebot lib version 0.4.15

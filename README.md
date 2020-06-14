@@ -68,6 +68,7 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 - Deebot Ozmo 920
 - Deebot Ozmo 930
 - Deebot Ozmo 950
+- Deebot Ozmo T8 AIVI
 
 **Theses models are known to work**
 - Deebot Ozmo 900
