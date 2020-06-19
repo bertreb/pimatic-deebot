@@ -53,6 +53,7 @@ module.exports = (env) ->
           @api.devices()
           .then((devices) =>
             for vacuum in devices
+              env.logger.info "Device: " + JSON.stringify(vacuum,null,2)
               _did = (if vacuum.did? then vacuum.did else vacuum).toLowerCase()
               if _.find(@framework.deviceManager.devicesConfig,(d) => (d.id).indexOf(_did)>=0)
                 env.logger.info "Device '" + _did + "' already in config"
