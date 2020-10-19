@@ -47,3 +47,5 @@
 * 20200619, v0.0.30
 	* update to ecovacs-deebot lib version 0.4.16
 	* fix unknown device error
+* 20201019, v0.0.31
+	* update to ecovacs-deebot lib version 0.4.21
