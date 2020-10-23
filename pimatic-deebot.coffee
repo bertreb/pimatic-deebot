@@ -190,7 +190,12 @@ module.exports = (env) ->
                       @setAttr("status","Deebot online")
                     )
                 @vacbot.on 'error', (err) =>
-                  env.logger.error "Error vacbot.on " + err
+                  env.logger.error "Error vacbot.on, try to reconnect in 5 minutes " + err
+                  # try to reconnect
+                  @vacbot.disconnect()
+                  clearTimeout(@reconnectTimer)
+                  clearTimeout(@statusTimer)
+                  @reconnectTimer = setTimeout(initDeebot, 300000)
 
                 getStatus = () =>
                   @vacbot.run("GetBatteryState")
@@ -216,13 +221,19 @@ module.exports = (env) ->
               @vacbot.connect_and_wait_until_ready()
 
           ).catch((err)=>
-            env.logger.error "Error getting devices " + err
+            env.logger.error "Error getting devices, try to reconnect in 5 minutes " + err
+            if @vacbot
+              @vacbot.disconnect()
+            clearTimeout(@reconnectTimer)
+            clearTimeout(@statusTimer)
+            @reconnectTimer = setTimeout(initDeebot, 300000)
+
           )
         ).catch((err) =>
           env.logger.error "Error connecting " + err
           @reconnectTimer = setTimeout(initDeebot, 120000)
           clearTimeout(@statusTimer)
-          env.logger.info "Beebot is offline, try reconnecting in 2 minutes"
+          env.logger.info "Deebot is offline, try reconnecting in 2 minutes"
           @setAttr("status","offline")
         )
 

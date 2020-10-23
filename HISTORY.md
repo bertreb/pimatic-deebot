@@ -49,3 +49,5 @@
 	* fix unknown device error
 * 20201019, v0.0.31
 	* update to ecovacs-deebot lib version 0.4.21
+* 20201023, v0.0.32
+	* added reconnect on error
