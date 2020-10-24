@@ -5,6 +5,9 @@ module.exports = (env) ->
   _ = require('lodash')
   deebot = require('ecovacs-deebot')
   nodeMachineId = require('node-machine-id')
+  CronJob = env.CronJob or require('cron').CronJob
+  everyDay = "0 1 0 * * *" # at midnight at 00:01
+  everyMinute = "0 * * * * *"
 
   class DeebotPlugin extends env.plugins.Plugin
     init: (app, @framework, @config) =>
@@ -239,6 +242,17 @@ module.exports = (env) ->
 
       initDeebot()
 
+      @reconnectingJob = new CronJob
+        cronTime: everyDay
+        onTick: =>
+          env.logger.debug "Daily reconnect of Deebot"
+          if @vacbot
+            @vacbot.disconnect()
+          clearTimeout(@reconnectTimer)
+          clearTimeout(@statusTimer)
+          initDeebot()
+      @reconnectingJob.start()
+
       super()
 
     execute: (command, rooms, speed, water, area, cleanings) =>
@@ -281,12 +295,10 @@ module.exports = (env) ->
 
 
     destroy:() =>
-      try
-        @vacbot.disconnect()
-      catch e
-        env.logger.debug('Failure in disconnecting: ' + e.message)
+      @vacbot.disconnect() if @vacbot
       clearTimeout(@reconnectTimer)
       clearTimeout(@statusTimer)
+      @reconnectingJob.stop() if @reconnectingJob
 
       super()
 

@@ -51,3 +51,5 @@
 	* update to ecovacs-deebot lib version 0.4.21
 * 20201023, v0.0.32
 	* added reconnect on error
+* 20201024, v0.0.33
+	* added daily reconnect timer
