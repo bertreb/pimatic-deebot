@@ -53,3 +53,5 @@
 	* added reconnect on error
 * 20201024, v0.0.33
 	* added daily reconnect
+*	20201025, v0.0.34
+	* update readme
