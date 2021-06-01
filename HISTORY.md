@@ -53,5 +53,7 @@
 	* added reconnect on error
 * 20201024, v0.0.33
 	* added daily reconnect
-*	20201025, v0.0.34
+* 20201025, v0.0.34
 	* update readme
+* 20210601, v0.0.35
+	* update to ecovacs-deebot lib version 0.6.0

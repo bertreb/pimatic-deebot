@@ -22,14 +22,14 @@
     "cleaner",
     "ecovacs"
   ],
-  "version": "0.0.34",
+  "version": "0.0.35",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bertreb/pimatic-deebot.git"
   },
   "configSchema": "pimatic-deebot-config-schema.coffee",
   "dependencies": {
-    "ecovacs-deebot": "^0.4.21",
+    "ecovacs-deebot": "^0.6.0",
     "lodash": "^4.17.15",
     "node-machine-id": "^1.1.12",
     "cron": "^1.7.2"
