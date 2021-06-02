@@ -88,4 +88,4 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 ---
 This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js).
 
-The minimum node requirement for this plugin is node v8!
+The minimum node requirement for this plugin is node v10!
