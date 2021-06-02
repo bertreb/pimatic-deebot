@@ -1,5 +1,6 @@
 # pimatic-deebot
-Pimatic plugin to control one or more Ecovacs Deebot cleaning robots
+Pimatic plugin to control one or more Ecovacs Deebot cleaning robots.
+This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js).
 
 Before install this plugin on Debian-based Linux systems the following commandline commands should be executed:
 ```bash
@@ -86,6 +87,5 @@ The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 - Deebot T9 series
 
 ---
-This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js).
 
 The minimum node requirement for this plugin is node v10!
