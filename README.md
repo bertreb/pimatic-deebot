@@ -62,7 +62,13 @@ The \<room-nummer> or the \$roomsvariable are optional. If you leave them out, t
 The fan speed-number must be 1 (silient), 2 (normal), 3 (high) or 4 (very high)
 
 ## Support of models
-**These models should work properly or at least partially**
+### Supported models
+
+* Deebot 900/901
+* Deebot OZMO 930
+* Deebot OZMO 920/950
+
+### These models should work properly or at least partially
 - Deebot Slim 2
 - Deebot N79 series
 - Deebot M88
