@@ -1,7 +1,9 @@
 # pimatic-deebot
 Pimatic plugin to control one or more Ecovacs Deebot cleaning robots.
+
 This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js).
 
+## Preparation
 Before install this plugin on Debian-based Linux systems the following commandline commands should be executed:
 ```bash
 sudo apt-get update
