@@ -1,4 +1,7 @@
-# pimatic-deebot
+# pimatic-deebot (depreciated)
+
+This repository is no longer maintaned!
+
 Pimatic plugin to control one or more Ecovacs Deebot cleaning robots.
 
 This plugin is based on the ecovacs-deebot library from [mrbungle64](https://github.com/mrbungle64/ecovacs-deebot.js).
