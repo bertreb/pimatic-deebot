@@ -1,6 +1,6 @@
 # pimatic-deebot
 
-# This repository is no longer maintaned!
+# This repository is no longer maintained!
 
 Pimatic plugin to control one or more Ecovacs Deebot cleaning robots.
 
