@@ -1,4 +1,4 @@
-# pimatic-deebot (depreciated)
+# pimatic-deebot
 
 # This repository is no longer maintaned!
 
